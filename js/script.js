@@ -11,6 +11,17 @@ function parseParamSearch(searchStr) {
     return paramObj;
 }
 
+function getDelay(delay) {
+    let delayPromise = new Promise((resolve, reject) => {
+        setTimeout(() => {
+            let date = new Date();
+            resolve(date);
+            reject(new Error("Таймер не сработал"));
+        }, delay);
+    });
+    return delayPromise;
+}
+
 let urlParamObj = parseParamSearch(urlParamStr);
 let userGitHubID = urlParamObj.username;
 console.log(userGitHubID);
@@ -26,9 +37,11 @@ if (userGitHubID !== undefined) {
     let baseUrl = "https://api.github.com/users/";
     let url = baseUrl + userGitHubID;
 
-    let answerFromGithub = fetch(url)
-        .then((response) => response.json())
-        .then((json) => {
+    Promise.all([fetch(url), getDelay(3000)])
+        .then(async ([res, dateObj]) => {
+            return [await res.json(), dateObj];
+        })
+        .then(([json, dateObj]) => {
             if (json.message == "Not Found") {
                 let errorText = document.createElement("p");
                 errorText.innerHTML = "Информация о пользователе не доступна";
@@ -57,6 +70,14 @@ if (userGitHubID !== undefined) {
             bio.innerHTML = bioOfUser ? bioOfUser : "Нет информации о пользователе.";
             document.querySelector(".container").append(bio);
 
+            let data = document.createElement("p");
+            data.innerHTML = `${dateObj.getHours()}:${dateObj.getMinutes()}:${dateObj.getSeconds()}`;
+            document.querySelector(".container").append(data);
+
+        })
+        .then(() => {
+            let preloader = document.querySelector(".preloader");
+            preloader.remove();
         })
         .catch(err => {
             console.log(err);
