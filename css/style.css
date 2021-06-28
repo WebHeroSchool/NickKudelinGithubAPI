@@ -623,3 +623,9 @@ body {
        80%{ width:12ch; }
      100% { width:13ch;} 
   }
+
+.nonVisible {
+  visibility: hidden;
+  display: none;
+  z-index: 0;
+}

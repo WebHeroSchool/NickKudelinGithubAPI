@@ -27,6 +27,9 @@ let userGitHubID = urlParamObj.username;
 console.log(userGitHubID);
 
 if (userGitHubID !== undefined) {
+    let preloader = document.querySelector(".preloader");
+    preloader.classList.toggle("nonVisible");
+
     let inputGitId = document.getElementById("username");
     let headerTitle = document.querySelector(".header-title");
 
@@ -76,8 +79,7 @@ if (userGitHubID !== undefined) {
 
         })
         .then(() => {
-            let preloader = document.querySelector(".preloader");
-            preloader.remove();
+            preloader.classList.toggle("nonVisible");
         })
         .catch(err => {
             console.log(err);
